@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaRG Antenna: Technology & Business Strategy</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chosen Palette: Corporate Tech - Warm Neutral Backgrounds with Deep Indigo/Blue Accents -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            color: #334155; /* Slate 700 */
+        }
+        
+        .accent-bg { background-color: #3b82f6; } /* Blue 500 */
+        .accent-text { color: #1e40af; } /* Blue 800 */
+        
+        /* Chart Container Styling - MANDATORY REQUIREMENT */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Constraint for larger screens */
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px; /* Default height */
+            max-height: 400px;
+        }
+
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 280px;
+            }
+        }
+
+        /* Custom Scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-active {
+            border-bottom: 2px solid #2563eb;
+            color: #1e3a8a;
+            font-weight: 600;
+        }
+    </style>
+    <!-- Application Structure Plan:
+         1. Hero Section: Immediate Value Prop (What is WaRG?).
+         2. Comparative Advantage (Interactive Chart): Demonstrates WHY WaRG is better than PCB/Standard Waveguides.
+         3. Technology & Patents: Explains HOW it works and the IP moat.
+         4. Market Applications: Grid layout with filtering for distinct sectors (6G, Auto, Satcom).
+         5. Roadmap & Future: Visual timeline of frequency expansion.
+         6. Business Model: Clear blocks for B2B engagement.
+         Rationale: This flow moves from "The Hook" (Performance) to "The Proof" (Tech/IP) to "The Opportunity" (Markets/Roadmap). 
+    -->
+    
+    <!-- Visualization & Content Choices:
+         1. Comparison Bar Chart: Goal -> Compare WaRG vs competitors. Method -> Chart.js Bar. Interaction -> Toggle metrics. Justification -> Clear quantitative win for WaRG.
+         2. Gain/Freq Line Chart: Goal -> Show technical superiority. Method -> Chart.js Line. Interaction -> Toggle Simulation vs Measured. Justification -> Engineers need to see signal performance.
+         3. Market Cards: Goal -> Show versatility. Method -> HTML Grid. Interaction -> Hover details.
+         4. Roadmap: Goal -> Show future growth. Method -> CSS Flex timeline.
+         
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-slate-800 tracking-tight">WaRG<span class="text-blue-600">.Tech</span></span>
+                </div>
+                <div class="hidden sm:flex space-x-8 items-center">
+                    <button onclick="scrollToSection('tech-overview')" class="text-slate-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Technology</button>
+                    <button onclick="scrollToSection('performance')" class="text-slate-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Performance</button>
+                    <button onclick="scrollToSection('markets')" class="text-slate-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Markets</button>
+                    <button onclick="scrollToSection('business')" class="text-slate-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">Business</button>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="flex items-center sm:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-slate-500 hover:text-slate-700 focus:outline-none">
+                        <span class="text-2xl">☰</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden sm:hidden bg-white border-t border-gray-100">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <button onclick="scrollToSection('tech-overview')" class="block w-full text-left px-3 py-2 text-base font-medium text-slate-600 hover:bg-slate-50">Technology</button>
+                <button onclick="scrollToSection('performance')" class="block w-full text-left px-3 py-2 text-base font-medium text-slate-600 hover:bg-slate-50">Performance</button>
+                <button onclick="scrollToSection('markets')" class="block w-full text-left px-3 py-2 text-base font-medium text-slate-600 hover:bg-slate-50">Markets</button>
+                <button onclick="scrollToSection('business')" class="block w-full text-left px-3 py-2 text-base font-medium text-slate-600 hover:bg-slate-50">Business</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-gradient-to-br from-slate-900 to-slate-800 text-white pt-20 pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
+                Next-Gen Millimeter-Wave Antennas
+            </h1>
+            <p class="text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
+                Introducing the <strong>Waffle-iron Ridge Gap (WaRG)</strong> waveguide. High efficiency, low loss, and simplified manufacturing for the 60GHz-300GHz era.
+            </p>
+            <div class="flex justify-center gap-4">
+                <button onclick="scrollToSection('performance')" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all shadow-lg shadow-blue-500/30">
+                    See Performance Data
+                </button>
+                <button onclick="scrollToSection('business')" class="bg-white/10 hover:bg-white/20 text-white border border-white/30 px-8 py-3 rounded-lg font-semibold transition-all backdrop-blur-sm">
+                    Partnership Model
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 space-y-24 mb-20">
+
+        <!-- Section 1: Technology Cards (Intro) -->
+        <section id="tech-overview" class="grid md:grid-cols-3 gap-6">
+            <!-- Card 1 -->
+            <div class="bg-white rounded-xl shadow-xl p-8 card-hover border-t-4 border-blue-500">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 text-2xl">📡</div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">High Efficiency</h3>
+                <p class="text-slate-600 leading-relaxed">
+                    WaRG eliminates dielectric loss common in PCBs, achieving >80% efficiency in the millimeter-wave band (60-300GHz).
+                </p>
+            </div>
+            <!-- Card 2 -->
+            <div class="bg-white rounded-xl shadow-xl p-8 card-hover border-t-4 border-indigo-500">
+                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4 text-2xl">⚙️</div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Contactless Assembly</h3>
+                <p class="text-slate-600 leading-relaxed">
+                    The "Waffle-iron" structure suppresses leakage waves, removing the need for physical electrical contact between layers.
+                </p>
+            </div>
+            <!-- Card 3 -->
+            <div class="bg-white rounded-xl shadow-xl p-8 card-hover border-t-4 border-teal-500">
+                <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4 text-2xl">📉</div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Cost Effective</h3>
+                <p class="text-slate-600 leading-relaxed">
+                    Compatible with Die-casting and injection molding, offering a massive cost advantage over standard CNC waveguides.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 2: Performance Comparison (Interactive Chart) -->
+        <section id="performance" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-8 md:p-10">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4">The WaRG Advantage</h2>
+                    <p class="text-slate-600 max-w-3xl">
+                        Traditional solutions force a compromise: <strong>Microstrip PCBs</strong> are cheap but lossy, while <strong>Standard Waveguides</strong> are efficient but expensive. WaRG breaks this trade-off by offering high performance with scalable manufacturing.
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-10">
+                    <!-- Chart Column -->
+                    <div class="lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-semibold text-slate-700">Technology Comparison</h3>
+                            <div class="flex bg-slate-100 rounded-lg p-1 text-sm">
+                                <button id="btn-efficiency" onclick="updateComparisonChart('efficiency')" class="px-4 py-1.5 rounded-md bg-white shadow-sm text-blue-700 font-medium transition-all">Efficiency</button>
+                                <button id="btn-ease" onclick="updateComparisonChart('ease')" class="px-4 py-1.5 rounded-md text-slate-500 hover:text-slate-700 font-medium transition-all">Mfg. Ease</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Chart Container -->
+                        <div class="chart-container bg-slate-50 rounded-lg border border-slate-100">
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                        <p class="mt-4 text-sm text-slate-500 italic text-center">
+                            *Scores normalized based on Slide 5 data analysis.
+                        </p>
+                    </div>
+
+                    <!-- Metrics/Key Stats Column -->
+                    <div class="space-y-6 flex flex-col justify-center">
+                        <div class="p-6 bg-blue-50 rounded-xl border border-blue-100">
+                            <div class="text-sm text-blue-600 font-semibold uppercase tracking-wider mb-1">WaRG Efficiency</div>
+                            <div class="text-4xl font-bold text-blue-900">> 80%</div>
+                            <p class="text-sm text-blue-700 mt-2">Comparable to expensive waveguides.</p>
+                        </div>
+                        <div class="p-6 bg-red-50 rounded-xl border border-red-100 opacity-75">
+                            <div class="text-sm text-red-600 font-semibold uppercase tracking-wider mb-1">PCB Efficiency</div>
+                            <div class="text-4xl font-bold text-red-900">< 40%</div>
+                            <p class="text-sm text-red-700 mt-2">High dielectric loss limits range.</p>
+                        </div>
+                        <div class="p-6 bg-green-50 rounded-xl border border-green-100">
+                            <div class="text-sm text-green-600 font-semibold uppercase tracking-wider mb-1">WaRG Mfg. Score</div>
+                            <div class="text-4xl font-bold text-green-900">High</div>
+                            <p class="text-sm text-green-700 mt-2">Suitable for mass production (Die-cast).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Technical Deep Dive (Patents & Simulation) -->
+        <section class="grid lg:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-4">Intellectual Property Landscape</h2>
+                <p class="text-slate-600 mb-6">
+                    Our strategy is built on a "Freedom to Operate" model, securing a defensive patent wall across major global markets.
+                </p>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-3 mt-0.5">✓</div>
+                        <div>
+                            <span class="block font-semibold text-slate-800">Core Structure Patent</span>
+                            <span class="text-sm text-slate-500">Registered. Covers the fundamental Waffle-iron geometry.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 w-8 h-8 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mr-3 mt-0.5">⌛</div>
+                        <div>
+                            <span class="block font-semibold text-slate-800">Wideband Feeding Mechanism</span>
+                            <span class="text-sm text-slate-500">Pending. Enables operation across broad bandwidths.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-3 mt-0.5">🌐</div>
+                        <div>
+                            <span class="block font-semibold text-slate-800">Global PCT Filings</span>
+                            <span class="text-sm text-slate-500">Coverage in USA, EU, and China.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-slate-800">Gain Performance</h2>
+                    <div class="flex space-x-2 text-sm">
+                         <span class="flex items-center"><span class="w-3 h-3 bg-blue-500 rounded-full mr-1"></span> Measured</span>
+                         <span class="flex items-center"><span class="w-3 h-3 bg-slate-300 rounded-full mr-1"></span> Simulation</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                     <!-- Chart Container -->
+                     <div class="chart-container h-64">
+                        <canvas id="gainChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-slate-400 mt-2">Illustrative data representing Slide 8 prototype results</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Target Markets -->
+        <section id="markets">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4">Target Applications</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto">
+                    WaRG technology is versatile, powering high-frequency applications from terrestrial telecommunications to space exploration.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Market Card 1 -->
+                <div class="group bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all border border-slate-100">
+                    <div class="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📡</div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">6G Telecom</h3>
+                    <p class="text-sm text-slate-500 mb-4">Fixed Wireless Access (FWA) and high-speed backhaul infrastructure.</p>
+                    <span class="inline-block bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full font-semibold">Telecommunications</span>
+                </div>
+
+                <!-- Market Card 2 -->
+                <div class="group bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all border border-slate-100">
+                    <div class="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🚘</div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">Automotive Radar</h3>
+                    <p class="text-sm text-slate-500 mb-4">77GHz - 79GHz high-resolution sensing for autonomous driving.</p>
+                    <span class="inline-block bg-teal-50 text-teal-700 text-xs px-2 py-1 rounded-full font-semibold">Mobility</span>
+                </div>
+
+                <!-- Market Card 3 -->
+                <div class="group bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all border border-slate-100">
+                    <div class="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🛰️</div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">Satcom</h3>
+                    <p class="text-sm text-slate-500 mb-4">Low-profile flat-panel terminals for LEO satellite connectivity.</p>
+                    <span class="inline-block bg-indigo-50 text-indigo-700 text-xs px-2 py-1 rounded-full font-semibold">Aerospace</span>
+                </div>
+
+                <!-- Market Card 4 -->
+                <div class="group bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all border border-slate-100">
+                    <div class="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🏭</div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">Industrial</h3>
+                    <p class="text-sm text-slate-500 mb-4">High-precision material analysis and non-destructive testing.</p>
+                    <span class="inline-block bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full font-semibold">Sensing</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Roadmap (CSS Timeline) -->
+        <section class="bg-slate-900 rounded-2xl p-8 md:p-12 text-white">
+            <h2 class="text-2xl md:text-3xl font-bold mb-8 text-center">Development Roadmap</h2>
+            <div class="relative max-w-4xl mx-auto">
+                <!-- Vertical Line (Mobile) / Horizontal Line (Desktop) -->
+                <div class="absolute left-4 md:left-0 top-0 bottom-0 md:top-1/2 md:w-full md:h-1 bg-slate-700 rounded z-0"></div>
+
+                <div class="grid md:grid-cols-3 gap-8 relative z-10">
+                    <!-- Step 1 -->
+                    <div class="flex md:block items-center">
+                        <div class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full border-4 border-slate-900 md:mx-auto md:mb-4 relative"></div>
+                        <div class="ml-4 md:ml-0 md:text-center">
+                            <span class="block text-blue-400 font-bold tracking-wider text-sm mb-1">CURRENT</span>
+                            <h3 class="text-xl font-bold text-white">28 GHz Band</h3>
+                            <p class="text-slate-400 text-sm mt-2">Initial commercialization. 5G/6G applications and Radar.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="flex md:block items-center">
+                        <div class="flex-shrink-0 w-8 h-8 bg-slate-700 border-2 border-slate-500 rounded-full md:mx-auto md:mb-4 relative"></div>
+                        <div class="ml-4 md:ml-0 md:text-center">
+                            <span class="block text-slate-500 font-bold tracking-wider text-sm mb-1">NEXT STEP</span>
+                            <h3 class="text-xl font-bold text-white">140 GHz Band</h3>
+                            <p class="text-slate-400 text-sm mt-2">Expansion into sub-THz frequencies for ultra-wideband comms.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex md:block items-center">
+                        <div class="flex-shrink-0 w-8 h-8 bg-slate-700 border-2 border-slate-500 rounded-full md:mx-auto md:mb-4 relative"></div>
+                        <div class="ml-4 md:ml-0 md:text-center">
+                            <span class="block text-slate-500 font-bold tracking-wider text-sm mb-1">FUTURE</span>
+                            <h3 class="text-xl font-bold text-white">300 GHz Band</h3>
+                            <p class="text-slate-400 text-sm mt-2">Full THz spectrum capability for advanced sensing and 7G.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Business Model -->
+        <section id="business" class="pb-20">
+            <h2 class="text-3xl font-bold text-slate-800 mb-10 text-center">Business Model & Engagement</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gradient-to-b from-white to-slate-50 p-8 rounded-xl border border-slate-200 text-center">
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">Licensing</h3>
+                    <p class="text-slate-600 text-sm mb-6">Direct technology licensing of WaRG patents for integration into your products.</p>
+                    <button class="w-full py-2 px-4 rounded border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors text-sm font-semibold">Contact IP Team</button>
+                </div>
+                
+                <div class="bg-gradient-to-b from-white to-slate-50 p-8 rounded-xl border-2 border-blue-600 relative text-center shadow-lg transform scale-105">
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white text-xs px-3 py-1 rounded-full uppercase font-bold tracking-wide">Most Popular</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">Joint Development</h3>
+                    <p class="text-slate-600 text-sm mb-6">Collaborative R&D to customize WaRG antennas for specific use-cases (e.g., Auto Radar).</p>
+                    <button class="w-full py-2 px-4 rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors text-sm font-semibold">Start Collaboration</button>
+                </div>
+
+                <div class="bg-gradient-to-b from-white to-slate-50 p-8 rounded-xl border border-slate-200 text-center">
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">Module Supply</h3>
+                    <p class="text-slate-600 text-sm mb-6">Supply of pre-manufactured antenna modules ready for system integration.</p>
+                    <button class="w-full py-2 px-4 rounded border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors text-sm font-semibold">Request Specs</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <span class="text-xl font-bold text-white">WaRG<span class="text-blue-500">.Tech</span></span>
+                <p class="text-sm mt-2">Revolutionizing Millimeter-Wave Connectivity.</p>
+            </div>
+            <div class="text-sm text-center md:text-right">
+                <p>&copy; 2024 [Company Name Placeholder]. All rights reserved.</p>
+                <p class="mt-1">Based on provided Patent & Business Strategy Report.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // State Management
+        const appState = {
+            currentChartMetric: 'efficiency' // 'efficiency' or 'ease'
+        };
+
+        // --- Navigation Logic ---
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- Chart 1: Comparison Bar Chart ---
+        const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+        
+        const comparisonData = {
+            labels: ['WaRG (Our Tech)', 'Standard Waveguide', 'Microstrip (PCB)'],
+            datasets: [{
+                label: 'Efficiency (%)',
+                data: [82, 88, 35],
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.9)', // Blue for WaRG
+                    'rgba(148, 163, 184, 0.6)', // Slate for Standard
+                    'rgba(239, 68, 68, 0.6)'    // Red for PCB
+                ],
+                borderColor: [
+                    'rgb(59, 130, 246)',
+                    'rgb(148, 163, 184)',
+                    'rgb(239, 68, 68)'
+                ],
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        };
+
+        const comparisonChart = new Chart(comparisonCtx, {
+            type: 'bar',
+            data: comparisonData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) { label += ': '; }
+                                label += context.parsed.y;
+                                if (appState.currentChartMetric === 'efficiency') label += '%';
+                                else label += '/10 Score';
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: 'rgba(226, 232, 240, 0.5)' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        function updateComparisonChart(metric) {
+            appState.currentChartMetric = metric;
+            
+            // UI Button State
+            const btnEff = document.getElementById('btn-efficiency');
+            const btnEase = document.getElementById('btn-ease');
+            const activeClass = "bg-white shadow-sm text-blue-700";
+            const inactiveClass = "text-slate-500 hover:text-slate-700";
+
+            if (metric === 'efficiency') {
+                btnEff.className = `px-4 py-1.5 rounded-md font-medium transition-all ${activeClass}`;
+                btnEase.className = `px-4 py-1.5 rounded-md font-medium transition-all ${inactiveClass}`;
+                
+                comparisonChart.data.datasets[0].label = 'Efficiency (%)';
+                comparisonChart.data.datasets[0].data = [82, 88, 35];
+                comparisonChart.options.scales.y.max = 100;
+            } else {
+                btnEase.className = `px-4 py-1.5 rounded-md font-medium transition-all ${activeClass}`;
+                btnEff.className = `px-4 py-1.5 rounded-md font-medium transition-all ${inactiveClass}`;
+                
+                comparisonChart.data.datasets[0].label = 'Manufacturing Ease (Score 1-10)';
+                comparisonChart.data.datasets[0].data = [8.5, 3, 9]; // WaRG High, WG Low, PCB High
+                comparisonChart.options.scales.y.max = 10;
+            }
+            comparisonChart.update();
+        }
+
+        // --- Chart 2: Gain vs Frequency Line Chart ---
+        const gainCtx = document.getElementById('gainChart').getContext('2d');
+        
+        // Generate illustrative data points
+        const freqLabels = Array.from({length: 20}, (_, i) => 26 + i * 0.5); // 26GHz to 35.5GHz
+        const simData = freqLabels.map(f => {
+            // Bell curve simulation centered around 28GHz
+            const diff = f - 28;
+            return 25 - (diff * diff * 0.5);
+        });
+        const measData = simData.map(v => v - (Math.random() * 1.5)); // Measured is slightly lower/noisier
+
+        const gainChart = new Chart(gainCtx, {
+            type: 'line',
+            data: {
+                labels: freqLabels,
+                datasets: [
+                    {
+                        label: 'Measured Gain (dBi)',
+                        data: measData,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointRadius: 2
+                    },
+                    {
+                        label: 'Simulation (dBi)',
+                        data: simData,
+                        borderColor: 'rgb(148, 163, 184)',
+                        borderDash: [5, 5],
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }, // Custom legend used in HTML
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        title: { display: true, text: 'Gain (dBi)' },
+                        suggestedMin: 15
+                    },
+                    x: {
+                        title: { display: true, text: 'Frequency (GHz)' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
